@@ -144,8 +144,11 @@
   <ItemGroup>
     <ClInclude Include="SIMD.h" />
     <ClInclude Include="SIMD_AVX.h" />
+    <ClInclude Include="SIMD_Constants.h" />
+    <ClInclude Include="SIMD_Math.h" />
     <ClInclude Include="SIMD_SSE.h" />
-    <ClInclude Include="SIMD_Terrain.h" />
+    <ClInclude Include="SIMD_Noise.h" />
+    <ClInclude Include="SIMD_VecSet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

@@ -3,6 +3,7 @@
 #define SIMD_SSE_H
 #include "SIMD.h"
 #ifdef SIMD_LEVEL_SSE3
+#include <cstdint>
 #include <smmintrin.h>
 #include <tmmintrin.h>
 #include <emmintrin.h>
@@ -13,9 +14,9 @@ public:
 	SIMDv() {
 		this->Data = static_cast<T*>(_aligned_malloc(sizeof(T), N));
 	}
-	~SIMDv() {
-		_aligned_free(this->Data);
-	}
+	//~SIMDv() {
+	//	_aligned_free(this->Data);
+	//}
 	T* Data;
 	T* alignedMalloc() {
 		return static_cast<T*>(_aligned_malloc(sizeof(T), N));
@@ -46,7 +47,7 @@ namespace simd {
 		}
 		// Loads 128 bits of data into this->Data
 		void Load(__m128i* data) {
-			_mm_load_si128(data);
+			*this->Data = _mm_load_si128(data);
 		}
 
 		// Basic operations for building this vector
@@ -64,7 +65,6 @@ namespace simd {
 		int32_t Get(uint8_t index) {
 			return (this->Data->m128i_i32[index]);
 		}
-
 		// Basic operators
 		__inline ivec4 ivec4::operator+(ivec4 const &other) {
 			return ivec4(_mm_add_epi32(*this->Data, *other.Data));
@@ -85,7 +85,7 @@ namespace simd {
 			*this->Data = _mm_mul_epi32(*other.Data, *this->Data);
 		}
 		__inline ivec4 operator<(ivec4 const &other) const {
-			return ivec4(_mm_cmplt_epi32(*this->Data, *other.Data));
+			return ivec4(_mm_cmpgt_epi32(*other.Data,*this->Data));
 		}
 		__inline ivec4 operator>(ivec4 const &other) const {
 			return ivec4(_mm_cmpgt_epi32(*this->Data, *other.Data));
@@ -106,23 +106,25 @@ namespace simd {
 			ivec4 other(0xffffffff);
 			return ivec4(_mm_xor_si128(*this->Data, *other.Data));
 		}
-		__inline ivec4 operator >> (ivec4 const& other) {
-
+		__inline ivec4 operator >> (ivec4 const& dist) {
+			return ivec4(_mm_srl_epi32(*this->Data, *dist.Data));
+		}
+		__inline ivec4 operator >> (int const& dist) {
+			ivec4 distv(dist);
+			return ivec4(_mm_srl_epi32(*this->Data, *distv.Data));
+		}
+		__inline ivec4 operator << (ivec4 const& dist) {
+			return ivec4(_mm_sll_epi32(*this->Data, *dist.Data));
+		}
+		__inline ivec4 operator << (int const& dist) {
+			ivec4 distv(dist);
+			return ivec4(_mm_sll_epi32(*this->Data, *distv.Data));
+		}
+		__inline ivec4 operator==(ivec4 const &other) const {
+			return ivec4(_mm_cmpeq_epi32(*this->Data,*other.Data));
 		}
 		// More advanced mathematical functions.
-		__inline ivec4 Max(ivec4& other) const {
-			return ivec4(_mm_max_epi32(*this->Data, *other.Data));
-		}
-		__inline ivec4 Max(ivec4 const &in0, ivec4 const &in1) const {
-			return ivec4(_mm_max_epi32(*in0.Data, *in1.Data));
-		}
-		// Convert to float type
-		__inline static vec4 ConvertToFloat(ivec4 const &in) {
-			return vec4(_mm_cvtepi32_ps(*in.Data));
-		}
-		__inline static ivec4 CastToInt(vec4 const &in) {
-			return ivec4(_mm_castps_si128(*in.Data));
-		}
+		
 	};
 
 	class vec4 : public SIMDv<__m128, 16> {
@@ -131,7 +133,8 @@ namespace simd {
 			*this->Data = _mm_setzero_ps();
 		}
 		vec4(float x, float y = 0.0f, float z = 0.0f, float w = 0.0f) {
-			*this->Data = _mm_set_ps(x, y, z, w);
+			// Order in memory is actually reversed.
+			*this->Data = _mm_set_ps(w, z, y, x);
 		}
 		vec4(__m128 data) {
 			*this->Data = data;
@@ -139,88 +142,87 @@ namespace simd {
 		void SetOne(float a = 0.0f) {
 			*this->Data = _mm_set_ps1(a);
 		}
+		// Load/store operations
+		void Store(__m128* data) {
+			for (int i = 0; i < 4; ++i) {
+				_mm_store_ps(&data->m128_f32[i], *this->Data);
+			}
+		}
+		// Loads 128 bits of data into this->Data
+		void Load(__m128* data) {
+			__m128 v;
+			v = _mm_load_ps(&data->m128_f32[0]);
+			*this->Data = v;
+		}
 		// Basic operators
 		// Unary operators
-		__inline vec4& operator+=(vec4 const & other) const {
+		__inline vec4& operator+=(vec4 const & other) {
 			*this->Data = _mm_add_ps(*this->Data, *other.Data);
+			return *this;
 		}
-		__inline vec4& operator-=(vec4 const & other) const {
+		__inline vec4& operator-=(vec4 const & other) {
 			*this->Data = _mm_add_ps(*this->Data, *other.Data);
+			return *this;
 		}
-		__inline vec4& operator*=(vec4 const & other) const {
+		__inline vec4& operator*=(vec4 const & other) {
 			*this->Data = _mm_mul_ps(*this->Data, *other.Data);
+			return *this;
 		}
-		__inline vec4& operator/=(vec4 const & other) const {
+		__inline vec4& operator/=(vec4 const & other) {
 			*this->Data = _mm_div_ps(*this->Data, *other.Data);
+			return *this;
 		}
-		__inline vec4& operator++() const {
+		__inline vec4& operator++() {
 			vec4 increment; increment.SetOne(1.0f);
 			*this->Data = _mm_add_ps(*this->Data, *increment.Data);
+			return *this;
 		}
-		__inline vec4& operator--() const {
+		__inline vec4& operator--() {
 			vec4 decrement; decrement.SetOne(1.0f);
 			*this->Data = _mm_add_ps(*this->Data, *decrement.Data);
+			return *this;
 		}
 		// Binary operators
-		__inline vec4 const operator+(vec4 const &other) const {
+		__inline vec4 operator+(vec4 const &other) const {
 			return vec4(_mm_add_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator-(vec4 const &other) const {
+		__inline vec4 operator-(vec4 const &other) const {
 			return vec4(_mm_sub_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator*(vec4 const &other) const {
+		__inline vec4 operator*(vec4 const &other) const {
 			return vec4(_mm_mul_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator/(vec4 const &other) const {
+		__inline vec4 operator/(vec4 const &other) const {
 			return vec4(_mm_div_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator<(vec4 const &other) const {
+		__inline vec4 operator<(vec4 const &other) const {
 			return vec4(_mm_cmplt_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator>(vec4 const &other) const {
+		__inline vec4 operator>(vec4 const &other) const {
 			return vec4(_mm_cmpgt_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator<=(vec4 const &other) const {
+		__inline vec4 operator<=(vec4 const &other) const {
 			return vec4(_mm_cmple_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator>=(vec4 const &other) const {
+		__inline vec4 operator>=(vec4 const &other) const {
 			return vec4(_mm_cmpge_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator&(vec4 const &other) const {
+		__inline vec4 operator&(vec4 const &other) const {
 			return vec4(_mm_and_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const operator|(vec4 const& other) const {
+		__inline vec4 operator|(vec4 const& other) const {
 			return vec4(_mm_or_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const xor(vec4 const& other) const {
+		__inline vec4 xor(vec4 const& other) const {
 			return vec4(_mm_xor_ps(*this->Data, *other.Data));
 		}
-		__inline vec4 const andnot(vec4 const& other) const {
+		__inline static vec4 xor(vec4 const& in0, vec4 const& in1) {
+			return vec4(_mm_xor_ps(*in0.Data, *in1.Data));
+		}
+		__inline vec4 andnot(vec4 const& other) const {
 			return vec4(_mm_andnot_ps(*this->Data, *other.Data));
 		}
-
-		// General mathematical functions
-		__inline static vec4 const sqrt(vec4 const &in){
-			return vec4(_mm_sqrt_ps(*in.Data));
-		}
-		__inline static vec4 const invSqrt(vec4 const &in){
-			return vec4(_mm_rsqrt_ps(*in.Data));
-		}
-		__inline static vec4 const max(vec4 const &in0, vec4 const &in1){
-			return vec4(_mm_max_ps(*in0.Data, *in1.Data));
-		}
-		__inline static vec4 const min(vec4 const &in0, vec4 const &in1){
-			return vec4(_mm_min_ps(*in0.Data, *in1.Data));
-		}
-		__inline static vec4 const floor(vec4 const &in){
-			return vec4(_mm_floor_ps(*in.Data));
-		}
-		__inline static ivec4 const convertToInt(vec4 const &in) {
-			return ivec4(_mm_cvtps_epi32(*in.Data));
-		}
-		__inline static vec4 const CastToFloat(ivec4 const &in) {
-			return vec4(_mm_castsi128_ps(*in.Data));
-		}
+		
 	};
 }
 #endif
