@@ -1,35 +1,21 @@
 ========================================================================
-    CONSOLE APPLICATION : SIMDWrap Project Overview
+    			SIMDWrap Overview
 ========================================================================
 
-AppWizard has created this SIMDWrap application for you.
+SIMDWrap.cpp currently only contains tests. Include the file SIMD.h to get
+started. Currently, only SIMD_SSE works. SIMD_AVX is not functional, and needs
+reworking since AVX isn't a quarter of what AVX2 is.
 
-This file contains a summary of what you will find in each of the files that
-make up your SIMDWrap application.
+The namespace is simd. So, building a new 4-element integer vector would be 
+done with 
 
-
-SIMDWrap.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
-
-SIMDWrap.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
-
-SIMDWrap.cpp
-    This is the main application source file.
+[cpp] SIMD4iv newVec();[/cpp]
 
 /////////////////////////////////////////////////////////////////////////////
 Other standard files:
 
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named SIMDWrap.pch and a precompiled types file named StdAfx.obj.
+StdAfx.h here only includes GLM stuff that you shouldn't need for the SIMD
+headers.
 
 /////////////////////////////////////////////////////////////////////////////
 Other notes:
