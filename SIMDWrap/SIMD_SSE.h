@@ -8,21 +8,19 @@
 #include <tmmintrin.h>
 #include <emmintrin.h>
 #include <xmmintrin.h>
-template<class T, std::size_t N>
+template<class T, size_t N>
 class __declspec(align(N)) SIMDv {
 public:
 	SIMDv() {
-		this->Data = static_cast<T*>(_aligned_malloc(sizeof(T), N));
+		this->Data = aligned_malloc<T>(N);
 	}
-	//~SIMDv() {
-	//	_aligned_free(this->Data);
-	//}
+	// Custom destructor removed: seems compiler handles this better than I could.
 	T* Data;
 	T* alignedMalloc() {
-		return static_cast<T*>(_aligned_malloc(sizeof(T), N));
+		return aligned_malloc<T>(N);
 	}
 	void freeData() {
-		_aligned_free(this->Data);
+		aligned_free(this->Data);
 	}
 };
 

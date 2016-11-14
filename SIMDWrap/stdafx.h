@@ -15,11 +15,4 @@
 #include <iostream>
 
 
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtx/simd_mat4.hpp>
-#include <gtx/simd_quat.hpp>
-#include <gtx/simd_vec4.hpp>
-
-
 // TODO: reference additional headers your program requires here

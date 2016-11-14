@@ -1,19 +1,35 @@
 #pragma once
 #ifndef SIMD_H
 #define SIMD_H
-// TODO: Detect max supported level automatically.
+#include "stdafx.h"
+#if defined(_WIN64)
+// 64-bit CPU's should all support SSE3 instruction set
 #define SIMD_LEVEL_SSE3
-#define SIMD_LEVEL_SSE41
-// Currently only using SSE3 + one SSE41 function
-#define COMPILER_MSVC
-#if defined(COMPILER_MSVC) || defined (COMPILER_INTEL)
-// TODO: set aligned alloc and aligned free macros here
-#elif defined(COMPILER_GNU) || defined(COMPILER_CLANG)
-// TODO: set aligned alloc and aligned free macros here
 #endif
+
+// Comment this line out if your CPU doesn't support SSE4.1 instructions.
+#define SIMD_LEVEL_SSE41
+// Currently only one SSE41 instruction - floor for a float-vec
+
+// Set correct aligned memory allocation function based on OS/Compiler
+#if defined(_WIN32)
+template <typename T>
+__inline T* aligned_malloc(std::size_t alignment) {
+	return static_cast<T*>(_aligned_malloc(sizeof(T), alignment));
+};
+#endif
+
+// Untested, but these "should" be correct.
+#if defined(unix)
+template<typename T>
+__inline T* aligned_malloc(std::size_t alignment) {
+	return posix_memalign(sizeof(T),alignment);
+}
+#endif
+
 // AVX implementation not functional. AVX is very sparse
 // features-wise, AVX2 has actual features
-#ifdef SIMD_LEVEL_AVX
+#ifdef SIMD_LEVEL_AVX2
 #include "SIMD_AVX.h"
 #endif // SIMD_LEVEL_AVX
 #ifdef SIMD_LEVEL_SSE3
