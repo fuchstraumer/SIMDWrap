@@ -26,7 +26,7 @@ __inline T* aligned_malloc(std::size_t alignment) {
 	return posix_memalign(sizeof(T),alignment);
 }
 #endif
-
+#define SIMD_LEVEL_AVX2
 // AVX implementation not functional. AVX is very sparse
 // features-wise, AVX2 has actual features
 #ifdef SIMD_LEVEL_AVX2

@@ -19,16 +19,14 @@ namespace simd {
 	}
 	
 	static ivec4 hash(ivec4 const &seed, ivec4 const& x, ivec4 const& y, ivec4 const& z) {
-		ivec4 hashtmp; hashtmp.Load(seed.Data);
+		ivec4 hashtmp = seed;
 		hashtmp += (x * xPrime);
 		hashtmp += (y * yPrime);
 		hashtmp += (z * zPrime);
 
 		hashtmp = ((hashtmp * hashtmp) * ivec4(60493)) * hashtmp;
 		hashtmp = ivec4::xor((hashtmp >> 13), hashtmp);
-		ivec4 hashresult; 
-		hashresult.Load(hashtmp.Data);
-		return hashresult;
+		return hashtmp;
 	}
 
 	static vec4 gradientcoord(ivec4 const &seed, ivec4 const &xi, ivec4 const &yi, ivec4 const &zi, vec4 const &x, vec4 const& y, vec4 const &z) {
@@ -107,6 +105,10 @@ namespace simd {
 		return (vec4(32.0f, 32.0f, 32.0f, 32.0f) * (n0 + n1 + n2 + n3));
 	}
 
+	static vec8 simplex(ivec4 const &seed, vec8 const &xi, vec8 const& yi, vec8 const &zi) {
+
+	}
+
 	static float FBM(ivec4 const &seed, vec4 const &xi, vec4 const &yi, vec4 const &zi, float frequency, int octaves, float lacunarity, float gain) {
 		vec4 sum(0.0f);
 		vec4 amplitude(1.0f);
@@ -125,7 +127,7 @@ namespace simd {
 			// Gain changes over octaves as well.
 			amplitude *= gain;
 		}
-		return sum.Data->m128_f32[0];
+		return sum.Data.m128_f32[0];
 	}
 
 	static vec4 RidgedMulti(ivec4 const &seed, vec4 const &xi, vec4 const &yi, vec4 const &zi, float frequency, int octaves, float lacunariy, float gain) {

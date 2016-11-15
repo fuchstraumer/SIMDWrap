@@ -6,6 +6,6 @@
 #include "SIMD_Noise.h"
 #include "SIMD_VecSet.h"
 int main() {
-	std::vector<simd::vec4> testparallel = simd::ParallelNoise(2048*1024);
+	std::vector<simd::vec4> testparallel = simd::ParallelNoise(2048);
 }
 
