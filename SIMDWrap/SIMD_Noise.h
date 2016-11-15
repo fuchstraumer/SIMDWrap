@@ -3,7 +3,7 @@
 #include "SIMD_SSE.h"
 #include "SIMD_Math.h"
 #include "SIMD_Constants.h"
-
+#include <random>
 namespace simd {
 
 
@@ -46,7 +46,7 @@ namespace simd {
 		
 		return (vec4::xor(u, h1) + vec4::xor(v, h2));
 	}
-
+	
 	static vec4 simplex(ivec4 const &seed, vec4 const &x, vec4 const &y, vec4 const &z) {
 		vec4 f; f = thirdconst * ((x + y) + z);
 		vec4 x0 = floor(x + f);
@@ -84,15 +84,15 @@ namespace simd {
 		vec4 y3 = (y0 - oneVecF) + halfconst;
 		vec4 z3 = (z0 - oneVecF) + halfconst;
 
-		vec4 t0 = ((vec4(0.6f, 0.6f, 0.6f, 0.6f) - (x0 * x0)) - (y0 * y0)) - (z0 * z0);
-		vec4 t1 = ((vec4(0.6f, 0.6f, 0.6f, 0.6f) - (x1 * x1)) - (y1 * y1)) - (z1 * z1);
-		vec4 t2 = ((vec4(0.6f, 0.6f, 0.6f, 0.6f) - (x2 * x2)) - (y2 * y2)) - (z2 * z2);
-		vec4 t3 = ((vec4(0.6f, 0.6f, 0.6f, 0.6f) - (x3 * x3)) - (y3 * y3)) - (z3 * z3);
+		vec4 t0 = ((vec4(0.6f) - (x0 * x0)) - (y0 * y0)) - (z0 * z0);
+		vec4 t1 = ((vec4(0.6f) - (x1 * x1)) - (y1 * y1)) - (z1 * z1);
+		vec4 t2 = ((vec4(0.6f) - (x2 * x2)) - (y2 * y2)) - (z2 * z2);
+		vec4 t3 = ((vec4(0.6f) - (x3 * x3)) - (y3 * y3)) - (z3 * z3);
 
-		vec4 n0 = t0 >= vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		vec4 n1 = t1 >= vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		vec4 n2 = t2 >= vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		vec4 n3 = t3 >= vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		vec4 n0 = t0 >= vec4(0.0f);
+		vec4 n1 = t1 >= vec4(0.0f);
+		vec4 n2 = t2 >= vec4(0.0f);
+		vec4 n3 = t3 >= vec4(0.0f);
 
 		t0 = t0 * t0;
 		t1 = t1 * t1;
@@ -133,6 +133,22 @@ namespace simd {
 		vec4 amplitude(1.0f);
 		for (int i = 0; i < octaves; ++i) {
 		}
+	}
+
+	static std::vector<vec4> ParallelNoise(unsigned int num) {
+		std::vector<vec4> results; std::mt19937 r;
+		std::uniform_int_distribution<> distr(-40, 40);
+		results.resize(num);
+#pragma loop(hint_parallel(4))
+		for (unsigned int i = 0; i < num; ++i) {
+			vec4 x = vec4((float)i + (float)distr(r), (float)i + (float)distr(r), (float)i + distr(r), (float)i + (float)distr(r));
+			vec4 y = vec4((float)i + (float)distr(r), (float)i + (float)distr(r), (float)i + distr(r), (float)i + (float)distr(r));
+			vec4 z = vec4((float)i + (float)distr(r), (float)i + (float)distr(r), (float)i + distr(r), (float)i + (float)distr(r));
+			vec4 res = FBM(ivec4(2342, 42111, 362, 2132), x, y, z, 0.01f, 6, 2.5f, 1.0f);
+			vec4 store; res.Store(store.Data);
+			results[i] = (store);
+		}
+		return results;
 	}
 
 #endif // SIMD_LEVEL_SSE3

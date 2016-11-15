@@ -9,10 +9,10 @@
 namespace simd {
 #ifdef SIMD_LEVEL_SSE3
 	// Constants for SSE3 instruction set
-	#define thirdconst vec4(0.3333333f,0.3333333f,0.3333333f,0.3333333f)
-	#define sixthconst vec4(0.1666667f,0.1666667f,0.1666667f,0.1666667f)
-	#define halfconst vec4(0.5f, 0.5f, 0.5f, 0.5f)
-	#define oneVecF vec4(1.0f,1.0f,1.0f,1.0f)
+	#define thirdconst vec4(0.3333333f)
+	#define sixthconst vec4(0.1666667f)
+	#define halfconst vec4(0.5f)
+	#define oneVecF vec4(1.0f)
 	#define oneVecI ivec4(1,1,1,1)
 	// These constants are for use with the noise functions
 	#define xPrime ivec4(1619,1619,1619,1619)
