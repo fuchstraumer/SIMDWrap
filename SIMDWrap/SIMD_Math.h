@@ -47,7 +47,7 @@ namespace simd {
 		return ivec4(_mm_castps_si128(in.Data));
 	}
 	// Simple linear interpolation
-	vec4 lerp(vec4 const &i, vec4 const &j, vec4 const &k) {
+	__inline static vec4 lerp(vec4 const &i, vec4 const &j, vec4 const &k) {
 		vec4 result;
 		result = (j - i);
 		result = result + (j * k);
@@ -76,6 +76,54 @@ namespace simd {
 
 #ifdef SIMD_LEVEL_AVX2
 	// Elementary math functions using AVX2 instructions
+	
+	// Return a vector where each entry is the maximum of the two input vector
+	// elements at the same entry position
+	__inline static vec8 max(vec8 const& a, vec8 const& b) {
+		return vec8(_mm256_max_ps(a.Data, b.Data));
+	}
+	// Return a vector where each entry is the minimum of the two input vector
+	// elements at the same entry position
+	__inline static vec8 min(vec8 const& a, vec8 const& b) {
+		return vec8(_mm256_min_ps(a.Data, b.Data));
+	}
+	// Return a vector that is the square root of the input vector
+	__inline static vec8 sqrt(vec8 const& a) {
+		return vec8(_mm256_sqrt_ps(a.Data));
+	}
+	// Return a vector that is the inverse (or reciprocal) square root of
+	// the input vector
+	__inline static vec8 invsqrt(vec8 const& a) {
+		return vec8(_mm256_rsqrt_ps(a.Data));
+	}
+	// Return a vector that is the inverse of the input vector
+	__inline static vec8 inv(vec8 const& a) {
+		return vec8(_mm256_rcp_ps(a.Data));
+	}
+	// Return a vector that is the reciprocal of the input - equivalent to inv()
+	__inline static vec8 rcp(vec8 const& a) {
+		return vec8(_mm256_rcp_ps(a.Data));
+	}
+	// Floor the input vector (round down to nearest whole number) and return 
+	// an integer vector as the result
+	__inline static ivec8 const ifloor(vec8 const& a) {
+		return ivec8(vec8::CastToInt(_mm256_floor_ps(a.Data)));
+	}
+	// Floor the input vector (round down to nearest whole number) and return 
+	// a float vector as the result
+	__inline static vec8 const floor(vec8 const& a) {
+		return vec8(_mm256_floor_ps(a.Data));
+	}
+	// Ceil the input vector (round up to nearest whole number and return
+	// an integer vector as the result
+	__inline static ivec8 const iceil(vec8 const& a) {
+		return ivec8(vec8::CastToInt(_mm256_ceil_ps(a.Data)));
+	}
+	// Ceil the input vector (round up to nearest whole number and return
+	// an integer vector as the result
+	__inline static vec8 const ceil(vec8 const& a) {
+		return vec8(_mm256_ceil_ps(a.Data));
+	}
 
 #endif // SIMD_LEVEL_AVX2
 
