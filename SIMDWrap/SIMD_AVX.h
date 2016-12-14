@@ -40,83 +40,97 @@ namespace simd {
 		}
 
 		// Unary operators
-		__inline vec8& operator+=(vec8 const &other) {
+		__forceinline vec8& operator+=(vec8 const &other) {
 			this->Data = _mm256_add_ps(this->Data, other.Data);
 			return *this;
 		}
-		__inline vec8& operator-=(vec8 const &other) {
+		__forceinline vec8& operator-=(vec8 const &other) {
 			this->Data = _mm256_sub_ps(this->Data, other.Data);
 			return *this;
 		}
-		__inline vec8& operator*=(vec8 const &other) {
+		__forceinline vec8& operator*=(vec8 const &other) {
 			this->Data = _mm256_mul_ps(this->Data, other.Data);
 			return *this;
 		}
-		__inline vec8& operator/=(vec8 const &other) {
+		__forceinline vec8& operator/=(vec8 const &other) {
 			this->Data = _mm256_div_ps(this->Data, other.Data);
 			return *this;
 		}
 		// Unary logic operators
-		__inline vec8& operator&=(vec8 const &a) {
+		__forceinline vec8& operator&=(vec8 const &a) {
 			this->Data = _mm256_and_ps(this->Data, a.Data);
 			return *this;
 		}
-		__inline vec8& operator|=(vec8 const &a) {
+		__forceinline vec8& operator|=(vec8 const &a) {
 			this->Data = _mm256_or_ps(this->Data, a.Data);
 			return *this;
 		}
 
 		// Increment/Decrement operators
-		__inline vec8& operator++() {
+		__forceinline vec8& operator++() {
 			vec8 one(1.0f);
 			*this += one;
 			return *this;
 		}
-		__inline vec8& operator--() {
+		__forceinline vec8& operator--() {
 			vec8 one(1.0f);
 			*this -= one;
 			return *this;
 		}
 
 		// Binary operators
-		__inline vec8 operator+(vec8 const &other) const {
+		__forceinline vec8 operator+(vec8 const &other) const {
 			return vec8(_mm256_add_ps(this->Data, other.Data));
 		}
-		__inline vec8 operator-(vec8 const &other) const {
+		__forceinline vec8 operator-(vec8 const &other) const {
 			return vec8(_mm256_sub_ps(this->Data, other.Data));
 		}
-		__inline vec8 operator*(vec8 const &other) const {
+		__forceinline vec8 operator*(vec8 const &other) const {
 			return vec8(_mm256_mul_ps(this->Data, other.Data));
 		}
-		__inline vec8 operator/(vec8 const &other) const {
+		__forceinline vec8 operator/(vec8 const &other) const {
 			return vec8(_mm256_div_ps(this->Data, other.Data));
 		}
 
 		// Binary logic operators
-		__inline vec8 operator&(vec8 const &other) const {
+		__forceinline vec8 operator&(vec8 const &other) const {
 			return vec8(_mm256_and_ps(this->Data, other.Data));
 		}
-		__inline vec8 operator|(vec8 const &other) const {
+		__forceinline vec8 operator|(vec8 const &other) const {
 			return vec8(_mm256_or_ps(this->Data, other.Data));
+		}
+
+		// Binary comparison operators
+		__forceinline vec8 operator>(vec8 const &other) const {
+			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_GT_OQ));
+		}
+		__forceinline vec8 operator>=(vec8 const &other) const {
+			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_GE_OQ));
+		}
+		__forceinline vec8 operator<(vec8 const &other) const {
+			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_LT_OQ));
+		}
+		__forceinline vec8 operator<=(vec8 const &other) const {
+			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_LE_OQ));
 		}
 
 		// Store
 
 		// Load
 
-		// Conversion - uses truncation
-		__inline static ivec8 ConvertToInt(vec8 const& a) {
-			return ivec8(_mm256_cvttps_epi32(a.Data));
+		
+
+		// Math operators
+		__forceinline vec8 floor(const vec8 &in) {
+			return vec8(_mm256_floor_ps(in.Data));
 		}
 
-		// Casting - no overhead, converts directly.
-		__inline static ivec8 CastToInt(vec8 const& a) {
-			return ivec8(_mm256_castps_si256(a.Data));
+		__forceinline static vec8 and_not(const vec8& v0, const vec8& v1) {
+			return vec8(_mm256_andnot_ps(v0.Data, v1.Data));
 		}
 
-		// Constexpr version of previous, since castps is for compilation only
-		__inline static constexpr __m256i CastToInt(__m256 const& a) {
-			return _mm256_castps_si256(a);
+		__forceinline static vec8 xor (const vec8& v0, const vec8& v1) {
+			return vec8(_mm256_xor_ps(v0.Data, v1.Data));
 		}
 	};
 
@@ -148,75 +162,101 @@ namespace simd {
 		}
 
 		// Conversion
-		__inline vec8 ConvertToFloat(ivec8 const &a) {
+		__forceinline static vec8 ConvertToFloat(ivec8 const &a) {
 			return vec8(_mm256_cvtepi32_ps(a.Data));
 		}
-
+		__forceinline static vec8 CastToFloat(ivec8 const& a) {
+			return vec8(_mm256_castsi256_ps(a.Data));
+		}
 		// Operators
 
 		// Unary arithmetic operators
-		__inline ivec8& operator+=(ivec8 const &other) {
+		__forceinline ivec8& operator+=(ivec8 const &other) {
 			this->Data = _mm256_add_epi32(this->Data, other.Data);
 			return *this;
 		}
-		__inline ivec8& operator-=(ivec8 const &other) {
+		__forceinline ivec8& operator-=(ivec8 const &other) {
 			this->Data = _mm256_sub_epi32(this->Data, other.Data);
 			return *this;
 		}
-		__inline ivec8 operator*=(ivec8 const &other) {
+		__forceinline ivec8 operator*=(ivec8 const &other) {
 			this->Data = _mm256_mul_epi32(this->Data, other.Data);
-			return *this;
-		}
-		// Warning: divide function requires conversions, may (will!) be inaccurate!
-		__inline ivec8 operator/=(ivec8 const &other) {
-			this->Data = vec8::ConvertToInt(_mm256_div_ps(ivec8::ConvertToFloat(*this).Data, ivec8::ConvertToFloat(other).Data)).Data;
 			return *this;
 		}
 
 		// Unary logic operators
-		__inline ivec8 const operator~() const {
+		__forceinline ivec8 const operator~() const {
 
 		}
-		__inline ivec8& operator&=(ivec8 const& a) {
+		__forceinline ivec8& operator&=(ivec8 const& a) {
 			this->Data = _mm256_and_si256(this->Data, a.Data);
 			return *this;
 		}
-		__inline ivec8& operator|=(ivec8 const& a) {
+		__forceinline ivec8& operator|=(ivec8 const& a) {
 			this->Data = _mm256_or_si256(this->Data, a.Data);
 			return *this;
 		}
 
 		// Increment and decrement operators
-		__inline ivec8& operator++() {
+		__forceinline ivec8& operator++() {
 			ivec8 one(1);
 			this->Data = _mm256_add_epi32(this->Data, one.Data);
 			return *this;
 		}
-		__inline ivec8& operator--() {
+		__forceinline ivec8& operator--() {
 			ivec8 one(1);
 			this->Data = _mm256_sub_epi32(this->Data, one.Data);
 			return *this;
 		}
 
 		// Binary arithmetic operators
-		__inline ivec8 const operator+(ivec8 const &a) const {
+		__forceinline ivec8 const operator+(ivec8 const &a) const {
 			return ivec8(_mm256_add_epi32(this->Data, a.Data));
 		}
-		__inline ivec8 const operator-(ivec8 const &a) const {
+		__forceinline ivec8 const operator-(ivec8 const &a) const {
 			return ivec8(_mm256_sub_epi32(this->Data, a.Data));
 		}
-		__inline ivec8 const operator*(ivec8 const &a) const {
+		__forceinline ivec8 const operator*(ivec8 const &a) const {
 			return ivec8(_mm256_mul_epi32(this->Data, a.Data));
 		}
+
 
 		// No division operand
 
 		// Binary logic operators
-		__inline ivec8 const operator&(ivec8 const& a) const {
+		__forceinline ivec8 const operator&(ivec8 const& a) const {
 			return ivec8(_mm256_and_si256(this->Data, a.Data));
 		}
-		__inline ivec8 const operator|(ivec8 const& a) const {
+		__forceinline ivec8 const operator|(ivec8 const& a) const {
 			return ivec8(_mm256_or_si256(this->Data, a.Data));
+		}
+
+		// Binary operands for bitshifting
+		__forceinline ivec8 const operator>>(int const& count) const {
+			return ivec8(_mm256_slli_epi32(this->Data, count));
+		}
+		__forceinline ivec8 const operator<<(int const& count) const {
+			return ivec8(_mm256_srli_epi32(this->Data, count));
+		}
+		// Binary comparison operators
+		__forceinline ivec8 operator>(ivec8 const& other) const {
+			return ivec8(_mm256_cmpgt_epi32(this->Data, other.Data));
+		}
+		__forceinline ivec8 operator<(ivec8 const& other) const {
+			return ivec8(_mm256_cmpgt_epi32(other.Data, this->Data));
+		}
+		__forceinline ivec8 operator==(ivec8 const& other) const {
+			return ivec8(_mm256_cmpeq_epi32(this->Data, other.Data));
+		}
+		// Other operators/functions
+		__forceinline static ivec8 and_not(ivec8 const& v0, ivec8 const& v1) {
+			return ivec8(_mm256_andnot_si256(v0.Data, v1.Data));
+		}
+		__forceinline static ivec8 xor (ivec8 const& v0, ivec8 const& v1) {
+			return ivec8(_mm256_xor_si256(v0.Data, v1.Data));
+		}
+		__forceinline static ivec8 not(ivec8 const& v0) {
+			return ivec8(_mm256_xor_si256(v0.Data, ivec8(0xffffffff).Data));
 		}
 	};
 

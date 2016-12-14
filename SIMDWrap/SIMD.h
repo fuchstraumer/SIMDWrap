@@ -14,7 +14,7 @@
 // Set correct aligned memory allocation function based on OS/Compiler
 #if defined(_WIN32)
 template <typename T>
-__inline T* aligned_malloc(std::size_t alignment) {
+__forceinline T* aligned_malloc(std::size_t alignment) {
 	return static_cast<T*>(_aligned_malloc(sizeof(T), alignment));
 };
 #endif
@@ -22,7 +22,7 @@ __inline T* aligned_malloc(std::size_t alignment) {
 // Untested, but these "should" be correct.
 #if defined(unix)
 template<typename T>
-__inline T* aligned_malloc(std::size_t alignment) {
+__forceinline T* aligned_malloc(std::size_t alignment) {
 	return posix_memalign(sizeof(T),alignment);
 }
 #endif

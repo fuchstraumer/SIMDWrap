@@ -47,9 +47,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SIMDWrap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SIMD_Noise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
