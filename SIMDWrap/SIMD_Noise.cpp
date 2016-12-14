@@ -2,8 +2,8 @@
 #include "SIMD_Noise.h"
 
 namespace simd {
-
-	static ivec4 hash(ivec4 const &seed, ivec4 const& x, ivec4 const& y, ivec4 const& z) {
+#ifdef SIMD_LEVEL_SSE3
+	ivec4 hash(ivec4 const &seed, ivec4 const& x, ivec4 const& y, ivec4 const& z) {
 		ivec4 hashtmp = seed;
 		hashtmp += (x * xPrime);
 		hashtmp += (y * yPrime);
@@ -14,7 +14,7 @@ namespace simd {
 		return hashtmp;
 	}
 
-	static vec4 gradientcoord(ivec4 const &seed, ivec4 const &xi, ivec4 const &yi, ivec4 const &zi, vec4 const &x, vec4 const& y, vec4 const &z) {
+	vec4 gradientcoord(ivec4 const &seed, ivec4 const &xi, ivec4 const &yi, ivec4 const &zi, vec4 const &x, vec4 const& y, vec4 const &z) {
 		ivec4 hashresult = ((hash(seed, xi, yi, zi))) & ivec4(15);
 		vec4 u = CastToFloat((hashresult < ivec4(8)));
 		u = blendv(y, x, u);
@@ -30,7 +30,7 @@ namespace simd {
 		return (vec4:: xor (u, h1) + vec4:: xor (v, h2));
 	}
 
-	static vec4 simplex(ivec4 const &seed, vec4 const &x, vec4 const &y, vec4 const &z) {
+	vec4 simplex(ivec4 const &seed, vec4 const &x, vec4 const &y, vec4 const &z) {
 		vec4 f; f = thirdconst * ((x + y) + z);
 		vec4 x0 = floor(x + f);
 		vec4 y0 = floor(y + f);
@@ -110,5 +110,10 @@ namespace simd {
 		}
 		return sum.Data.m128_f32[0];
 	}
+#endif
 
+#ifdef SIMD_LEVEL_AVX2
+
+
+#endif
 } // namespace simd
