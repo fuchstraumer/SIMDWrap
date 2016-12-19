@@ -165,16 +165,46 @@ namespace simd {
 	__forceinline static vec8 ceil(vec8 const& a) {
 		return vec8(_mm256_ceil_ps(a.Data));
 	}
-
+	// Blends between v0 and v1 using the given mask vec
 	__forceinline static vec8 blendv(vec8 const& v0, vec8 const& v1, vec8 const& mask) {
 		return vec8(_mm256_blendv_ps(v0.Data, v1.Data, mask.Data));
 	}
-
+	// takes module of v0 with respect to v1
 	__forceinline static vec8 mod(vec8 const& v0, vec8 const& v1) {
 		vec8 const divisor0 = v0 / v1;
 		vec8 const flr = floor(divisor0);
 		vec8 const mul = v1 * flr;
 		return vec8(v0 - mul);
+	}
+
+	// Various Fused multiply instructions
+
+	// a * b + c
+	__forceinline static vec8 fma(vec8 const& a, vec8 const& b, vec8 const& c) {
+		vec8 res;
+		res.Data = _mm256_fmadd_ps(a.Data, b.Data, c.Data);
+		return res;
+	}
+
+	// a * b - c
+	__forceinline static vec8 fms(vec8 const& a, vec8 const& b, vec8 const& c) {
+		vec8 res;
+		res.Data = _mm256_fmsub_ps(a.Data, b.Data, c.Data);
+		return res;
+	}
+
+	// Clamp v0 to the range given by maxval, minval (vector version)
+	__forceinline static vec8 clamp(vec8 const& v0, vec8 const& min_val, vec8 const& max_val) {
+		vec8 min0 = _mm256_min_ps(v0.Data, max_val.Data);
+		vec8 res(_mm256_max_ps(min0.Data, min_val.Data));
+		return res;
+	}
+
+	// Clamp v0 to the range given by maxval, minval (float version)
+	__forceinline static vec8 clam(vec8 const& v0, const float& min, const float& max) {
+		vec8 minv(min), maxv(max);
+		vec8 res = clamp(v0, minv, maxv);
+		return res;
 	}
 
 #endif // SIMD_LEVEL_AVX2
