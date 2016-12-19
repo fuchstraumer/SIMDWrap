@@ -2,7 +2,6 @@
 #define SIMD_NOISE_H
 #include "SIMD.h"
 #include "SIMD_Math.h"
-#include "SIMD_Constants.h"
 #include <random>
 #include <functional>
 namespace simd {

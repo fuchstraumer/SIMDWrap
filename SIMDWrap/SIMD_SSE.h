@@ -251,6 +251,14 @@ namespace simd {
 			return vec4(_mm_andnot_ps(this->Data, other.Data));
 		}
 		
+		__forceinline static vec4 dot(vec4 const& v0, vec4 const& v1) {
+			vec4 mul = v0 * v1;
+			vec4 tmp = _mm_shuffle_ps(mul.Data, mul.Data, _MM_SHUFFLE(3, 2, 1, 0));
+			tmp += mul;
+			vec4 res = _mm_shuffle_ps(tmp.Data, tmp.Data, _MM_SHUFFLE(2, 3, 0, 1));
+			res += tmp;
+			return res;
+		}
 	};
 }
 #endif

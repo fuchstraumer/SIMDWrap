@@ -13,6 +13,7 @@ namespace simd {
 	class vec8 : public SIMDv<__m256, 32> {
 	public:
 		// Constructors
+
 		vec8() : SIMDv() {
 			this->Data = _mm256_setzero_ps();
 		}
@@ -32,7 +33,9 @@ namespace simd {
 		vec8(vec8 const &other) {
 			this->Data = other.Data;
 		}
+
 		// Basic operators
+
 		// Copy/equals
 		__inline vec8& operator=(vec8 const &other) {
 			this->Data = other.Data;
@@ -56,6 +59,7 @@ namespace simd {
 			this->Data = _mm256_div_ps(this->Data, other.Data);
 			return *this;
 		}
+
 		// Unary logic operators
 		__forceinline vec8& operator&=(vec8 const &a) {
 			this->Data = _mm256_and_ps(this->Data, a.Data);
@@ -114,17 +118,12 @@ namespace simd {
 			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_LE_OQ));
 		}
 
-		// Store
-
-		// Load
-
-		
-
 		// Math operators
 		__forceinline vec8 floor(const vec8 &in) {
 			return vec8(_mm256_floor_ps(in.Data));
 		}
 
+		// Special comparison operators
 		__forceinline static vec8 and_not(const vec8& v0, const vec8& v1) {
 			return vec8(_mm256_andnot_ps(v0.Data, v1.Data));
 		}
@@ -138,6 +137,7 @@ namespace simd {
 	public:
 		// Constructors
 		ivec8() : SIMDv() {
+
 			this->Data = _mm256_setzero_si256();
 		}
 
@@ -168,6 +168,7 @@ namespace simd {
 		__forceinline static vec8 CastToFloat(ivec8 const& a) {
 			return vec8(_mm256_castsi256_ps(a.Data));
 		}
+
 		// Operators
 
 		// Unary arithmetic operators
@@ -220,10 +221,11 @@ namespace simd {
 			return ivec8(_mm256_mul_epi32(this->Data, a.Data));
 		}
 
-
 		// No division operand
 
+
 		// Binary logic operators
+
 		__forceinline ivec8 const operator&(ivec8 const& a) const {
 			return ivec8(_mm256_and_si256(this->Data, a.Data));
 		}
@@ -232,13 +234,16 @@ namespace simd {
 		}
 
 		// Binary operands for bitshifting
+
 		__forceinline ivec8 const operator>>(int const& count) const {
 			return ivec8(_mm256_slli_epi32(this->Data, count));
 		}
 		__forceinline ivec8 const operator<<(int const& count) const {
 			return ivec8(_mm256_srli_epi32(this->Data, count));
 		}
+
 		// Binary comparison operators
+
 		__forceinline ivec8 operator>(ivec8 const& other) const {
 			return ivec8(_mm256_cmpgt_epi32(this->Data, other.Data));
 		}
@@ -248,7 +253,9 @@ namespace simd {
 		__forceinline ivec8 operator==(ivec8 const& other) const {
 			return ivec8(_mm256_cmpeq_epi32(this->Data, other.Data));
 		}
+
 		// Other operators/functions
+
 		__forceinline static ivec8 and_not(ivec8 const& v0, ivec8 const& v1) {
 			return ivec8(_mm256_andnot_si256(v0.Data, v1.Data));
 		}
@@ -258,10 +265,22 @@ namespace simd {
 		__forceinline static ivec8 not(ivec8 const& v0) {
 			return ivec8(_mm256_xor_si256(v0.Data, ivec8(0xffffffff).Data));
 		}
+
+		// Dot product - taken from http://tomjbward.co.uk/simd-optimized-dot-and-cross
+		__forceinline static vec8 dot(const vec8& v0, const vec8& v1) {
+	
+			vec8 res = v0 * v1;
+			res.Data = _mm256_hadd_ps(res.Data, res.Data);
+			res.Data = _mm256_hadd_ps(res.Data, res.Data);
+			return res;
+		}
+
+		// Cross product, taken from http://tomjbward.co.uk/simd-optimized-dot-and-cross
 	};
 
 	class dvec4 : public SIMDv<__m256d, 32>{
 	public:
+		// Constructors
 		dvec4() {
 			this->Data = _mm256_setzero_pd();
 		}

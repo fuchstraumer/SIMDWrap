@@ -153,8 +153,9 @@
   <ItemGroup>
     <ClInclude Include="SIMD.h" />
     <ClInclude Include="SIMD_AVX.h" />
-    <ClInclude Include="SIMD_Constants.h" />
+    <ClInclude Include="SIMD_Geometric.h" />
     <ClInclude Include="SIMD_Math.h" />
+    <ClInclude Include="SIMD_Matrices.h" />
     <ClInclude Include="SIMD_SSE.h" />
     <ClInclude Include="SIMD_Noise.h" />
     <ClInclude Include="SIMD_VecSet.h" />

@@ -33,13 +33,16 @@
     <ClInclude Include="SIMD_Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SIMD_Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SIMD_VecSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SIMD_Noise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SIMD_Matrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SIMD_Geometric.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
