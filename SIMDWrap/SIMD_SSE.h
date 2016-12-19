@@ -259,7 +259,25 @@ namespace simd {
 			res += tmp;
 			return res;
 		}
-	};
+
+		/*
+			Following defined in SIMD_Math.h
+		*/
+
+		// Takes the sqrt of each element in the given input vector
+		static vec4 sqrt(vec4 const & in);
+
+		// Returns the maximum of the two input vectors in each element
+		// (i.e, a vector containing the max of both vector's elements)
+		static vec4 max(vec4 const & in0, vec4 const & in1);
+
+		// Returns the minimum of the two input vectors in each element
+		// (i.e, a vector containing the mins of both vector's elements)
+		static vec4 min(vec4 const & in0, vec4 const & in1);
+
+		// Linearly interpolates between the input vectors
+		static vec4 lerp(vec4 const & i, vec4 const & j, vec4 const & k);
+};
 }
 #endif
 

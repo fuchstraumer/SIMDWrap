@@ -131,7 +131,22 @@ namespace simd {
 		__forceinline static vec8 xor (const vec8& v0, const vec8& v1) {
 			return vec8(_mm256_xor_ps(v0.Data, v1.Data));
 		}
-	};
+
+		/*
+			Following defined in SIMD_Math.h
+		*/
+
+		// Takes the max of the input vector and returns a vector
+		// where each entry is the maximum of the two at a position
+		static vec8 max(vec8 const & a, vec8 const & b);
+
+		// Takes the min of the input vector and returns a vector
+		// where each entry is the minimum of the two at a position
+		static vec8 min(vec8 const & a, vec8 const & b);
+
+		// Takes the sqrt of the input vector
+		static vec8 sqrt(vec8 const & a);
+};
 
 	class ivec8 : public SIMDv<__m256i, 32> {
 	public:

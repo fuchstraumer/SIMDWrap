@@ -4,6 +4,23 @@
 
 #include "SIMD.h"
 
+#ifdef SIMD_LEVEL_SSE3
+namespace simd {
+	// Dot product of two input vectors
+	__forceinline static vec4 dot(const vec4& v0, const vec4& v1) {
+		vec4 mul = v0 * v1;
+		vec4 hadd = _mm_hadd_ps(mul.Data, mul.Data);
+		return vec4(_mm_hadd_ps(hadd.Data, hadd.Data));
+	}
+	// Returns vector-length of input vectors
+	__forceinline static vec4 length(const vec4& v0) {
+		vec4 dot_p = dot(v0, v0);
+		return vec4(vec4::sqrt(dot_p));
+	}
+}
+
+#endif
+
 #ifdef SIMD_LEVEL_AVX2
 
 /*

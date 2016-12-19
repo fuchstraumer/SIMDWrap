@@ -7,13 +7,9 @@ namespace simd {
 	// Elementary math functions using SSE instructions
 	#include "SIMD_SSE.h"
 
-	// Return a vector made up of the max of each element from in0 and in1
-	__forceinline static ivec4 max(ivec4 const &in0, ivec4 const &in1){
-		return ivec4(_mm_max_epi32(in0.Data, in1.Data));
-	}
-	
+
 	// Take the square root of &in
-	__forceinline static vec4 sqrt(vec4 const &in) {
+	__forceinline vec4 vec4::sqrt(vec4 const &in) {
 		return vec4(_mm_sqrt_ps(in.Data));
 	}
 
@@ -23,12 +19,12 @@ namespace simd {
 	}
 
 	// Compare the two inputs and return the maximum in each position
-	__forceinline static vec4 max(vec4 const &in0, vec4 const &in1) {
+	__forceinline vec4 vec4::max(vec4 const &in0, vec4 const &in1) {
 		return vec4(_mm_max_ps(in0.Data, in1.Data));
 	}
 
 	// Compare the two inputs and return the minimum in each position
-	__forceinline static vec4 min(vec4 const &in0, vec4 const &in1) {
+	__forceinline vec4 vec4::min(vec4 const &in0, vec4 const &in1) {
 		return vec4(_mm_min_ps(in0.Data, in1.Data));
 	}
 	// Convert the input float-vec into an int-vec
@@ -54,7 +50,7 @@ namespace simd {
 	}
 
 	// Simple linear interpolation
-	__forceinline static vec4 lerp(vec4 const &i, vec4 const &j, vec4 const &k) {
+	__forceinline vec4 vec4::lerp(vec4 const &i, vec4 const &j, vec4 const &k) {
 		vec4 result;
 		result = (j - i);
 		result = result + (j * k);
@@ -62,23 +58,24 @@ namespace simd {
 	}
 
 	// Normalize the input vector
-	__forceinline static vec4 norm(vec4 const& in) {
+	__forceinline static vec4 normalize(vec4 const& in) {
 		vec4 mul = invsqrt(in);
 		vec4 res = mul * in;
 		return res;
 	}
-
-	// Find the exponential pow of the input vector : this is the fast method. Less precise than other method,
-	// but yields one scalar result every 3 processor cycles.
-	// TODO
-	__forceinline static vec4 fastpow() {
-		throw("Not implemented");
-		return vec4(0.0f);
-	}
 #endif // SIMD_LEVEL_SSE3
 
+/*
+	
+	There are some instructions only available with SSE4.1/4.2
+	support. These instructions are quite useful, however.
+
+	They are defined below.
+
+*/
+
 #ifdef SIMD_LEVEL_SSE41
-	// Couple extra functions using SSE4.1 instructions
+	
 	// Round the input float-vec down to the nearest integer
 	__forceinline static vec4 floor(vec4 const &in) {
 		return vec4(_mm_floor_ps(in.Data));
@@ -96,8 +93,9 @@ namespace simd {
 	}
 #endif // SIMD_LEVEL_SSE41
 
-#ifdef SIMD_LEVEL_AVX2
 
+#ifdef SIMD_LEVEL_AVX2
+	#include "SIMD_AVX.h"
 	// Elementary math functions using AVX2 instructions
 	// Conversion - uses truncation
 	__forceinline static ivec8 ConvertToInt(vec8 const& a) {
@@ -111,18 +109,18 @@ namespace simd {
 	
 	// Return a vector where each entry is the maximum of the two input vector
 	// elements at the same entry position
-	__forceinline static vec8 max(vec8 const& a, vec8 const& b) {
+	__forceinline vec8 vec8::max(vec8 const& a, vec8 const& b) {
 		return vec8(_mm256_max_ps(a.Data, b.Data));
 	}
 
 	// Return a vector where each entry is the minimum of the two input vector
 	// elements at the same entry position
-	__forceinline static vec8 min(vec8 const& a, vec8 const& b) {
+	__forceinline vec8 vec8::min(vec8 const& a, vec8 const& b) {
 		return vec8(_mm256_min_ps(a.Data, b.Data));
 	}
 
 	// Return a vector that is the square root of the input vector
-	__forceinline static vec8 sqrt(vec8 const& a) {
+	__forceinline vec8 vec8::sqrt(vec8 const& a) {
 		return vec8(_mm256_sqrt_ps(a.Data));
 	}
 
@@ -201,7 +199,7 @@ namespace simd {
 	}
 
 	// Clamp v0 to the range given by maxval, minval (float version)
-	__forceinline static vec8 clam(vec8 const& v0, const float& min, const float& max) {
+	__forceinline static vec8 clamp(vec8 const& v0, const float& min, const float& max) {
 		vec8 minv(min), maxv(max);
 		vec8 res = clamp(v0, minv, maxv);
 		return res;
