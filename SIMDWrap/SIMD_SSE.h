@@ -18,11 +18,11 @@ namespace simd {
 			*data = _mm_setzero_si128();
 		}
 
-		ivec4(int32_t a, int32_t b, int32_t c, int32_t d = 0) {
+		ivec4(const int32_t& a, const int32_t& b, const int32_t& c, const int32_t& d = 0) {
 			*data = _mm_set_epi32(a, b, c, d);
 		}
 
-		ivec4(int32_t a) {
+		ivec4(const int32_t& a) {
 			*data = _mm_set1_epi32(a);
 		}
 
@@ -41,12 +41,12 @@ namespace simd {
 
 		// Basic operations for building this vector
 		// Set four separate elements a,b,c,d
-		void Set(int32_t a = 0, int32_t b = 0, int32_t c = 0, int32_t d = 0) {
+		void Set(const int32_t& a = 0, const int32_t& b = 0, const int32_t& c = 0, const int32_t& d = 0) {
 			*data = _mm_set_epi32(a, b, c, d);
 		}
 
 		// Set all elements to be equal to x
-		void Set(int32_t x) {
+		void Set(const int32_t& x) {
 			*data = _mm_set1_epi32(x);
 		}
 
@@ -103,6 +103,7 @@ namespace simd {
 		__forceinline static ivec4 andnot(ivec4 const &in0, ivec4 const &in1) {
 			return ivec4(_mm_andnot_si128(*in0.data, *in0.data));
 		}
+
 		// performing a NOT on this vector is done by xor'ing with a vec
 		// set to be 100% 1's
 		__forceinline ivec4 operator~() const{
@@ -143,35 +144,41 @@ namespace simd {
 
 	class vec4 : public SIMDv<__m128, 16> {
 	public:
+
 		// Initialize a vec4 with all elements set to zero
-		vec4() {
+		vec4() : SIMDv() {
 			*data = _mm_setzero_ps();
 		}
 
 		// Initialize a vec4 with at least two distinct elements
-		vec4(float x, float y, float z = 0.0f, float w = 0.0f) {
+		vec4(const float& x, const float& y, const float& z = 0.0f, const float& w = 0.0f) : SIMDv() {
 			// Order in memory is actually reversed.
 			*data = _mm_set_ps(w, z, y, x);
 		}
 
 		// Initialize a vec4 with all values set to a
-		vec4(float a) {
+		vec4(const float& a) : SIMDv() {
 			*data = _mm_set1_ps(a);
 		}
 
 		// Initialize a vec4 by providing the intrinsic base type
-		vec4(__m128 _data) {
-			*data = _data;
+		vec4(__m128 _data) : SIMDv() {
+			*data = std::move(_data);
 		}
 
 		// Uniformly set all elements in this vector to a
-		void Fill(float a = 0.0f) {
+		void Fill(const float& a = 0.0f) {
 			*data = _mm_set_ps1(a);
 		}
 
 		// Store this vec4's data into data
 		void Store(__m128 _data) {
 			_mm_store_ps(&data->m128_f32[0], _data);
+		}
+
+		// Load specified pointer into data
+		void Load(float* ptr) {
+			*data = _mm_load_ps(ptr);
 		}
 
 		// Basic operators
@@ -193,15 +200,33 @@ namespace simd {
 			*data = _mm_div_ps(*data, *other.data);
 			return *this;
 		}
+
+		// pre & post increment/decrement operators
+
 		__forceinline vec4& operator++() {
-			static __m128 one = _mm_set1_ps(1.0f);
+			static const __m128 one = _mm_set1_ps(1.0f);
 			*data = _mm_add_ps(*data, one);
 			return *this;
 		}
+
 		__forceinline vec4& operator--() {
-			static __m128 neg_one = _mm_set1_ps(-1.0f);
-			*data = _mm_add_ps(*data, neg_one);
+			static const __m128 one = _mm_set1_ps(1.0f);
+			*data = _mm_sub_ps(*data, one);
 			return *this;
+		}
+
+		__forceinline vec4 operator++(int) {
+			static const __m128 one = _mm_set1_ps(1.0f);
+			vec4 result = *this;
+			*data = _mm_add_ps(*data, one);
+			return result;
+		}
+
+		__forceinline vec4 operator--(int) {
+			static const __m128 one = _mm_set1_ps(1.0f);
+			vec4 result = *this;
+			*data = _mm_sub_ps(*data, one);
+			return result;
 		}
 
 		// Binary operators

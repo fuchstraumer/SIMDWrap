@@ -1,6 +1,7 @@
 #pragma once
 #ifndef SIMD_WRAP_SIMD_V_H
 #define SIMD_WRAP_SIMD_V_H
+#include <utility>
 
 // Set correct aligned memory allocation function based on OS/Compiler
 #if defined(_WIN32)
@@ -31,21 +32,40 @@ __forceinline void aligned_free(void* data) {
 template<class T, size_t N>
 class __declspec(align(N)) SIMDv {
 public:
-	SIMDv() {
-		data = aligned_malloc<T>(N);
-	}
+
+	SIMDv() : data(aligned_malloc<T>(N)) {}
 
 	~SIMDv() {
 		aligned_free<T>(data);
 	}
-	// Custom destructor removed: seems compiler handles this better than I could.
-	T* data;
+
+	SIMDv(const SIMDv& other) : data(alignedMalloc()) {
+		*data = *other.data;
+	}
+
+	SIMDv& operator=(const SIMDv& other) {
+		*data = *other.data;
+		return *this;
+	}
+
+	SIMDv(SIMDv&& other) noexcept : data(other.data) {
+		other.data = nullptr;
+	}
+
+	SIMDv& operator=(SIMDv&& other) noexcept {
+		data = other.data;
+		other.data = nullptr;
+		return *this;
+	}
+
 	T* alignedMalloc() {
 		return aligned_malloc<T>(N);
 	}
 	void free() {
 		aligned_free(data);
 	}
+
+	T* data;
 };
 
 #endif // !SIMD_WRAP_SIMD_V_H
