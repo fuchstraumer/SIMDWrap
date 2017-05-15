@@ -9,8 +9,8 @@ namespace simd {
 	// Dot product of two input vectors
 	__forceinline static vec4 dot(const vec4& v0, const vec4& v1) {
 		vec4 mul = v0 * v1;
-		vec4 hadd = _mm_hadd_ps(mul.Data, mul.Data);
-		return vec4(_mm_hadd_ps(hadd.Data, hadd.Data));
+		vec4 hadd = _mm_hadd_ps(*mul.data, *mul.data);
+		return vec4(_mm_hadd_ps(*hadd.data, *hadd.data));
 	}
 	// Returns vector-length of input vectors
 	__forceinline static vec4 length(const vec4& v0) {
@@ -35,8 +35,8 @@ namespace simd {
 	// Dot product of two input vectors
 	__forceinline static vec8 dot(const vec8& v0, const vec8 &v1) {
 		vec8 mul = v0 * v1;
-		vec8 hadd0 = _mm256_hadd_ps(mul.Data, mul.Data);
-		vec8 res = _mm256_hadd_ps(hadd0.Data, hadd0.Data);
+		vec8 hadd0 = _mm256_hadd_ps(*mul.data, *mul.data);
+		vec8 res = _mm256_hadd_ps(*hadd0.data, *hadd0.data);
 		return res;
 	}
 
@@ -48,7 +48,7 @@ namespace simd {
 	// Length of this vector, returned as a vector
 	__forceinline static vec8 length(const vec8& v0) {
 		vec8 prod = dot(v0, v0);
-		prod.Data = _mm256_sqrt_ps(prod.Data);
+		prod.data = _mm256_sqrt_ps(*prod.data);
 		return prod;
 	}
 }

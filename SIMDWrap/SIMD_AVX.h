@@ -15,121 +15,143 @@ namespace simd {
 		// Constructors
 
 		vec8() : SIMDv() {
-			this->Data = _mm256_setzero_ps();
+			*data= _mm256_setzero_ps();
 		}
 
-		vec8(__m256 data) {
-			this->Data = data;
+		vec8(__m256 _data) {
+			*data = _data;
 		}
 
 		vec8(float a) {
-			this->Data = _mm256_set1_ps(a);
+			*data = _mm256_set1_ps(a);
 		}
 
 		vec8(float a, float b, float c = 0.0f, float d = 0.0f, float e = 0.0f, float f = 0.0f, float g = 0.0f, float h = 0.0f) {
-			this->Data = _mm256_set_ps(h, g, f, e, d, c, b, a);
+			*data = _mm256_set_ps(h, g, f, e, d, c, b, a);
 		}
 
 		vec8(vec8 const &other) {
-			this->Data = other.Data;
+			*data = *other.data;
 		}
 
-		// Basic operators
+		vec8(vec8&& other) noexcept {
+			*data = std::move(*other.data);
+		}
 
-		// Copy/equals
-		__inline vec8& operator=(vec8 const &other) {
-			this->Data = other.Data;
+		__forceinline vec8& operator=(vec8 const &other) {
+			*data = *other.data;
+			return *this;
+		}
+
+		__forceinline vec8& operator=(vec8&& other) noexcept {
+			*data = std::move(*other.data);
 			return *this;
 		}
 
 		// Unary operators
 		__forceinline vec8& operator+=(vec8 const &other) {
-			this->Data = _mm256_add_ps(this->Data, other.Data);
+			*data = _mm256_add_ps(*data, *other.data);
 			return *this;
 		}
 		__forceinline vec8& operator-=(vec8 const &other) {
-			this->Data = _mm256_sub_ps(this->Data, other.Data);
+			*data = _mm256_sub_ps(*data, *other.data);
 			return *this;
 		}
 		__forceinline vec8& operator*=(vec8 const &other) {
-			this->Data = _mm256_mul_ps(this->Data, other.Data);
+			*data = _mm256_mul_ps(*data, *other.data);
 			return *this;
 		}
 		__forceinline vec8& operator/=(vec8 const &other) {
-			this->Data = _mm256_div_ps(this->Data, other.Data);
+			*data = _mm256_div_ps(*data, *other.data);
 			return *this;
 		}
 
 		// Unary logic operators
 		__forceinline vec8& operator&=(vec8 const &a) {
-			this->Data = _mm256_and_ps(this->Data, a.Data);
+			*data = _mm256_and_ps(*data, *a.data);
 			return *this;
 		}
 		__forceinline vec8& operator|=(vec8 const &a) {
-			this->Data = _mm256_or_ps(this->Data, a.Data);
+			*data = _mm256_or_ps(*data, *a.data);
 			return *this;
 		}
 
 		// Increment/Decrement operators
-		__forceinline vec8& operator++() {
-			vec8 one(1.0f);
-			*this += one;
+
+		__forceinline const vec8 operator++(int) {
+			__m256 incr = _mm256_set1_ps(1.0f);
+			vec8 res = *this;
+			_mm256_add_ps(*data, incr);
+			return res;
+		}
+
+		__forceinline const vec8& operator++() {
+			__m256 incr = _mm256_set1_ps(1.0f);
+			_mm256_sub_ps(*data, incr);
 			return *this;
 		}
+
+		__forceinline const vec8 operator--(int) {
+			__m256 incr = _mm256_set1_ps(-1.0f);
+			vec8 res = *this;
+			_mm256_sub_ps(*data, incr);
+			return res;
+		}
+
 		__forceinline vec8& operator--() {
-			vec8 one(1.0f);
-			*this -= one;
+			__m256 incr = _mm256_set1_ps(-1.0f);
+			_mm256_sub_ps(*data, incr);
 			return *this;
 		}
 
 		// Binary operators
 		__forceinline vec8 operator+(vec8 const &other) const {
-			return vec8(_mm256_add_ps(this->Data, other.Data));
+			return vec8(_mm256_add_ps(*data, *other.data));
 		}
 		__forceinline vec8 operator-(vec8 const &other) const {
-			return vec8(_mm256_sub_ps(this->Data, other.Data));
+			return vec8(_mm256_sub_ps(*data, *other.data));
 		}
 		__forceinline vec8 operator*(vec8 const &other) const {
-			return vec8(_mm256_mul_ps(this->Data, other.Data));
+			return vec8(_mm256_mul_ps(*data, *other.data));
 		}
 		__forceinline vec8 operator/(vec8 const &other) const {
-			return vec8(_mm256_div_ps(this->Data, other.Data));
+			return vec8(_mm256_div_ps(*data, *other.data));
 		}
 
 		// Binary logic operators
 		__forceinline vec8 operator&(vec8 const &other) const {
-			return vec8(_mm256_and_ps(this->Data, other.Data));
+			return vec8(_mm256_and_ps(*data, *other.data));
 		}
 		__forceinline vec8 operator|(vec8 const &other) const {
-			return vec8(_mm256_or_ps(this->Data, other.Data));
+			return vec8(_mm256_or_ps(*data, *other.data));
 		}
 
 		// Binary comparison operators
 		__forceinline vec8 operator>(vec8 const &other) const {
-			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_GT_OQ));
+			return vec8(_mm256_cmp_ps(*data, *other.data, _CMP_GT_OQ));
 		}
 		__forceinline vec8 operator>=(vec8 const &other) const {
-			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_GE_OQ));
+			return vec8(_mm256_cmp_ps(*data, *other.data, _CMP_GE_OQ));
 		}
 		__forceinline vec8 operator<(vec8 const &other) const {
-			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_LT_OQ));
+			return vec8(_mm256_cmp_ps(*data, *other.data, _CMP_LT_OQ));
 		}
 		__forceinline vec8 operator<=(vec8 const &other) const {
-			return vec8(_mm256_cmp_ps(this->Data, other.Data, _CMP_LE_OQ));
+			return vec8(_mm256_cmp_ps(*data, *other.data, _CMP_LE_OQ));
 		}
 
 		// Math operators
 		__forceinline vec8 floor(const vec8 &in) {
-			return vec8(_mm256_floor_ps(in.Data));
+			return vec8(_mm256_floor_ps(*in.data));
 		}
 
 		// Special comparison operators
 		__forceinline static vec8 and_not(const vec8& v0, const vec8& v1) {
-			return vec8(_mm256_andnot_ps(v0.Data, v1.Data));
+			return vec8(_mm256_andnot_ps(*v0.data, *v1.data));
 		}
 
 		__forceinline static vec8 xor (const vec8& v0, const vec8& v1) {
-			return vec8(_mm256_xor_ps(v0.Data, v1.Data));
+			return vec8(_mm256_xor_ps(*v0.data, *v1.data));
 		}
 
 		/*
@@ -153,50 +175,50 @@ namespace simd {
 		// Constructors
 		ivec8() : SIMDv() {
 
-			this->Data = _mm256_setzero_si256();
+			*data = _mm256_setzero_si256();
 		}
 
-		ivec8(__m256i data) {
-			this->Data = data;
+		ivec8(__m256i _data) {
+			*data = _data;
 		}
 
-		ivec8(__m256 data) {
-			this->Data = _mm256_cvttps_epi32(data);
+		ivec8(__m256 _data) {
+			*data = _mm256_cvttps_epi32(_data);
 		}
 
 		ivec8(float a) {
-			this->Data = _mm256_set1_epi32(a);
+			*data = _mm256_set1_epi32(a);
 		}
 
 		ivec8(float a, float b, float c = 0.0f, float d = 0.0f, float e = 0.0f, float f = 0.0f, float g = 0.0f, float h = 0.0f) {
-			this->Data = _mm256_set_epi32(h, g, f, e, d, c, b, a);
+			*data = _mm256_set_epi32(h, g, f, e, d, c, b, a);
 		}
 
 		ivec8(ivec8 const &other) {
-			this->Data = other.Data;
+			*data = *other.data;
 		}
 
 		// Conversion
 		__forceinline static vec8 ConvertToFloat(ivec8 const &a) {
-			return vec8(_mm256_cvtepi32_ps(a.Data));
+			return vec8(_mm256_cvtepi32_ps(*a.data));
 		}
 		__forceinline static vec8 CastToFloat(ivec8 const& a) {
-			return vec8(_mm256_castsi256_ps(a.Data));
+			return vec8(_mm256_castsi256_ps(*a.data));
 		}
 
 		// Operators
 
 		// Unary arithmetic operators
 		__forceinline ivec8& operator+=(ivec8 const &other) {
-			this->Data = _mm256_add_epi32(this->Data, other.Data);
+			*data = _mm256_add_epi32(*data, *other.data);
 			return *this;
 		}
 		__forceinline ivec8& operator-=(ivec8 const &other) {
-			this->Data = _mm256_sub_epi32(this->Data, other.Data);
+			*data = _mm256_sub_epi32(*data, *other.data);
 			return *this;
 		}
 		__forceinline ivec8 operator*=(ivec8 const &other) {
-			this->Data = _mm256_mul_epi32(this->Data, other.Data);
+			*data = _mm256_mul_epi32(*data, *other.data);
 			return *this;
 		}
 
@@ -205,35 +227,37 @@ namespace simd {
 
 		}
 		__forceinline ivec8& operator&=(ivec8 const& a) {
-			this->Data = _mm256_and_si256(this->Data, a.Data);
+			*data = _mm256_and_si256(*data, *a.data);
 			return *this;
 		}
 		__forceinline ivec8& operator|=(ivec8 const& a) {
-			this->Data = _mm256_or_si256(this->Data, a.Data);
+			*data = _mm256_or_si256(*data, *a.data);
 			return *this;
 		}
 
 		// Increment and decrement operators
 		__forceinline ivec8& operator++() {
-			ivec8 one(1);
-			this->Data = _mm256_add_epi32(this->Data, one.Data);
+			__m256i one;
+			one = _mm256_set1_epi32(1);
+			*data = _mm256_add_epi32(*data, one);
 			return *this;
 		}
 		__forceinline ivec8& operator--() {
-			ivec8 one(1);
-			this->Data = _mm256_sub_epi32(this->Data, one.Data);
+			__m256i one;
+			one = _mm256_set1_epi32(1);
+			*data = _mm256_sub_epi32(*data, one);
 			return *this;
 		}
 
 		// Binary arithmetic operators
 		__forceinline ivec8 const operator+(ivec8 const &a) const {
-			return ivec8(_mm256_add_epi32(this->Data, a.Data));
+			return ivec8(_mm256_add_epi32(*data, *a.data));
 		}
 		__forceinline ivec8 const operator-(ivec8 const &a) const {
-			return ivec8(_mm256_sub_epi32(this->Data, a.Data));
+			return ivec8(_mm256_sub_epi32(*data, *a.data));
 		}
 		__forceinline ivec8 const operator*(ivec8 const &a) const {
-			return ivec8(_mm256_mul_epi32(this->Data, a.Data));
+			return ivec8(_mm256_mul_epi32(*data, *a.data));
 		}
 
 		// No division operand
@@ -242,51 +266,50 @@ namespace simd {
 		// Binary logic operators
 
 		__forceinline ivec8 const operator&(ivec8 const& a) const {
-			return ivec8(_mm256_and_si256(this->Data, a.Data));
+			return ivec8(_mm256_and_si256(*data, *a.data));
 		}
 		__forceinline ivec8 const operator|(ivec8 const& a) const {
-			return ivec8(_mm256_or_si256(this->Data, a.Data));
+			return ivec8(_mm256_or_si256(*data, *a.data));
 		}
 
 		// Binary operands for bitshifting
 
 		__forceinline ivec8 const operator>>(int const& count) const {
-			return ivec8(_mm256_slli_epi32(this->Data, count));
+			return ivec8(_mm256_slli_epi32(*data, count));
 		}
 		__forceinline ivec8 const operator<<(int const& count) const {
-			return ivec8(_mm256_srli_epi32(this->Data, count));
+			return ivec8(_mm256_srli_epi32(*data, count));
 		}
 
 		// Binary comparison operators
 
 		__forceinline ivec8 operator>(ivec8 const& other) const {
-			return ivec8(_mm256_cmpgt_epi32(this->Data, other.Data));
+			return ivec8(_mm256_cmpgt_epi32(*data, *other.data));
 		}
 		__forceinline ivec8 operator<(ivec8 const& other) const {
-			return ivec8(_mm256_cmpgt_epi32(other.Data, this->Data));
+			return ivec8(_mm256_cmpgt_epi32(*other.data, *data));
 		}
 		__forceinline ivec8 operator==(ivec8 const& other) const {
-			return ivec8(_mm256_cmpeq_epi32(this->Data, other.Data));
+			return ivec8(_mm256_cmpeq_epi32(*data, *other.data));
 		}
 
 		// Other operators/functions
 
 		__forceinline static ivec8 and_not(ivec8 const& v0, ivec8 const& v1) {
-			return ivec8(_mm256_andnot_si256(v0.Data, v1.Data));
+			return ivec8(_mm256_andnot_si256(*v0.data, *v1.data));
 		}
 		__forceinline static ivec8 xor (ivec8 const& v0, ivec8 const& v1) {
-			return ivec8(_mm256_xor_si256(v0.Data, v1.Data));
+			return ivec8(_mm256_xor_si256(*v0.data, *v1.data));
 		}
 		__forceinline static ivec8 not(ivec8 const& v0) {
-			return ivec8(_mm256_xor_si256(v0.Data, ivec8(0xffffffff).Data));
+			return ivec8(_mm256_xor_si256(*v0.data, *ivec8(0xffffffff).data));
 		}
 
 		// Dot product - taken from http://tomjbward.co.uk/simd-optimized-dot-and-cross
 		__forceinline static vec8 dot(const vec8& v0, const vec8& v1) {
-	
 			vec8 res = v0 * v1;
-			res.Data = _mm256_hadd_ps(res.Data, res.Data);
-			res.Data = _mm256_hadd_ps(res.Data, res.Data);
+			*res.data = _mm256_hadd_ps(*res.data, *res.data);
+			*res.data = _mm256_hadd_ps(*res.data, *res.data);
 			return res;
 		}
 
@@ -297,14 +320,14 @@ namespace simd {
 	public:
 		// Constructors
 		dvec4() {
-			this->Data = _mm256_setzero_pd();
+			*data = _mm256_setzero_pd();
 		}
 		dvec4(double a) {
-			this->Data = _mm256_set1_pd(a);
+			*data = _mm256_set1_pd(a);
 		}
 		dvec4(double a, double b, double c, double d) {
 			// Order in memory is effectively reversed.
-			this->Data = _mm256_set_pd(d, c, b, a);
+			*data = _mm256_set_pd(d, c, b, a);
 		}
 	};
 }
