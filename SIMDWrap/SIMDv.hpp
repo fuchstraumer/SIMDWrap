@@ -5,10 +5,10 @@
 #include <utility>
 #include <memory>
 
-#ifdef _MSC_VER
+#ifdef __GNUC__
 #define SIMD_CALL __vectorcall
 #else 
-#define SIMD_CALL __cdecl
+#define SIMD_CALL __vectorcall
 #endif
 
 // Set correct aligned memory allocation function based on OS/Compiler
