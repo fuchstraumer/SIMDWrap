@@ -5,7 +5,7 @@
 namespace simd {
 #ifdef SIMD_LEVEL_SSE3
 	// Elementary math functions using SSE instructions
-	#include "SIMD_SSE.h"
+	#include "SIMD_SSE.hpp"
 
 
 	// Take the square root of &in

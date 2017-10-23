@@ -2,7 +2,7 @@
 #ifndef SIMD_GEOMETRIC_H
 #define SIMD_GEOMETRIC_H
 
-#include "SIMD.h"
+#include "SIMD.hpp"
 
 #ifdef SIMD_LEVEL_SSE3
 namespace simd {

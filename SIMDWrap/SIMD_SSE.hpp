@@ -1,7 +1,7 @@
 #pragma once
 #ifndef SIMD_SSE_H
 #define SIMD_SSE_H
-#include "SIMD.h"
+#include "SIMD.hpp"
 #ifdef SIMD_LEVEL_SSE3
 #include <cstdint>
 #include <smmintrin.h>
@@ -12,7 +12,7 @@
 
 namespace simd {
 
-	class ivec4 : public SIMDv<__m128i, 16> {
+	class ivec4 : public simd_vector_t<__m128i, 16> {
 	public:
 		ivec4() : SIMDv() {
 			*data = _mm_setzero_si128();

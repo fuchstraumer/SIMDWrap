@@ -2,7 +2,7 @@
 #ifndef SIMD_MATRICES_H
 #define SIMD_MATRICES_H
 
-#include "SIMD.h"
+#include "SIMD.hpp"
 #include <array>
 #ifdef SIMD_LEVEL_SSE3
 
@@ -21,7 +21,7 @@ namespace simd {
 #endif // !SIMD_LEVEL_SSE3
 
 #ifdef SIMD_LEVEL_AVX2
-#include "SIMD_AVX.h"
+#include "SIMD_AVX.hpp"
 namespace simd {
 
 	// This matrix holds 3 8-element vectors, for use in 3D operations

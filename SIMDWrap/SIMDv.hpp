@@ -39,9 +39,7 @@ public:
 
 	simd_vector_t() : data(aligned_malloc<T>(N), &aligned_free) {}
 
-	~simd_vector_t() {
-		aligned_free<T>(data);
-	}
+	~simd_vector_t() = default;
 
 	simd_vector_t(const simd_vector_t& other) : data(aligned_malloc<T>(N), &aligned_free) {
 		*data = *other.data;

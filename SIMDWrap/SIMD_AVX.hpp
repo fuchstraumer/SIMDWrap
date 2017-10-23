@@ -10,7 +10,7 @@ namespace simd {
 	class ivec8;
 	class dvec4;
 
-	class vec8 : public SIMDv<__m256, 32> {
+	class vec8 : public simd_vector_t<__m256, 32> {
 	public:
 		// Constructors
 
