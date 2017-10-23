@@ -1,58 +1,62 @@
 #pragma once
 #ifndef SIMD_WRAP_SIMD_V_H
 #define SIMD_WRAP_SIMD_V_H
+
 #include <utility>
+#include <memory>
 
 // Set correct aligned memory allocation function based on OS/Compiler
 #if defined(_WIN32)
+
 template <typename T>
-__forceinline T* aligned_malloc(std::size_t alignment) {
+T* aligned_malloc(std::size_t alignment) {
 	return static_cast<T*>(_aligned_malloc(sizeof(T), alignment));
 };
 
 template<typename T>
-__forceinline void aligned_free(void* data) {
+void aligned_free(void* data) {
 	_aligned_free(data);
 }
-#endif
 
-// Untested, but these "should" be correct.
-#if defined(unix)
+#elif defined(unix)
+
 template<typename T>
-__forceinline T* aligned_malloc(std::size_t alignment) {
+T* aligned_malloc(std::size_t alignment) {
 	return posix_memalign(sizeof(T), alignment);
 }
 
 template<typename T>
-__forceinline void aligned_free(void* data) {
+void aligned_free(void* data) {
 	free(data);
 }
+
+
 #endif
 
 template<class T, size_t N>
-class __declspec(align(N)) SIMDv {
+class simd_vector_t {
 public:
 
-	SIMDv() : data(aligned_malloc<T>(N)) {}
+	simd_vector_t() : data(aligned_malloc<T>(N), &aligned_free) {}
 
-	~SIMDv() {
+	~simd_vector_t() {
 		aligned_free<T>(data);
 	}
 
-	SIMDv(const SIMDv& other) : data(alignedMalloc()) {
+	simd_vector_t(const simd_vector_t& other) : data(aligned_malloc<T>(N), &aligned_free) {
 		*data = *other.data;
 	}
 
-	SIMDv& operator=(const SIMDv& other) {
+	simd_vector_t& operator=(const simd_vector_t& other) {
 		*data = *other.data;
 		return *this;
 	}
 
-	SIMDv(SIMDv&& other) noexcept : data(other.data) {
+	simd_vector_t(simd_vector_t&& other) noexcept : data(other.data) {
 		other.data = nullptr;
 	}
 
-	SIMDv& operator=(SIMDv&& other) noexcept {
+	simd_vector_t& operator=(simd_vector_t&& other) noexcept {
 		data = other.data;
 		other.data = nullptr;
 		return *this;
@@ -61,11 +65,10 @@ public:
 	T* alignedMalloc() {
 		return aligned_malloc<T>(N);
 	}
-	void free() {
-		aligned_free(data);
-	}
 
-	T* data;
+protected:
+	std::unique_ptr<T> data;
+
 };
 
 #endif // !SIMD_WRAP_SIMD_V_H
