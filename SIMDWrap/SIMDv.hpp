@@ -5,6 +5,12 @@
 #include <utility>
 #include <memory>
 
+#ifdef _MSC_VER
+#define SIMD_CALL __vectorcall
+#else 
+#define SIMD_CALL __cdecl
+#endif
+
 // Set correct aligned memory allocation function based on OS/Compiler
 #if defined(_WIN32)
 
