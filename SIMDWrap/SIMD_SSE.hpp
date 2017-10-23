@@ -52,89 +52,89 @@ namespace simd {
 
 		// Basic operators
 		// Unary operators
-		ivec4& operator+=(ivec4 const &other) {
+		ivec4& SIMD_CALL operator+=(ivec4 const &other) {
 			*data = _mm_add_epi32(*data, *other.data);
 			return *this;
 		}
 
-		 ivec4& operator-=(ivec4 const &other) {
+		ivec4& SIMD_CALL operator-=(ivec4 const &other) {
 			*data = _mm_sub_epi32(*data, *other.data);
 			return *this;
 		}
 
-		 ivec4& operator*=(ivec4 const &other) {
+		ivec4& SIMD_CALL operator*=(ivec4 const &other) {
 			*data = _mm_mul_epi32(*other.data, *data);
 			return *this;
 		}
 
 		// Binary operators
-		ivec4 ivec4::operator+(ivec4 const &other) const {
+		ivec4 SIMD_CALLivec4::operator+(ivec4 const &other) const {
 			return ivec4(_mm_add_epi32(*data, *other.data));
 		}
 
-		ivec4 ivec4::operator-(ivec4 const &other) const {
+		ivec4 SIMD_CALL ivec4::operator-(ivec4 const &other) const {
 			return ivec4(_mm_sub_epi32(*data, *other.data));
 		}
 
-		ivec4 operator*(ivec4 const &other) const {
+		ivec4 SIMD_CALL operator*(ivec4 const &other) const {
 			return ivec4(_mm_mul_epi32(*data, *other.data));
 		}
 		
-		ivec4 operator<(ivec4 const &other) const {
+		ivec4 SIMD_CALL operator<(ivec4 const &other) const {
 			return ivec4(_mm_cmpgt_epi32(*other.data,*data));
 		}
 
-		ivec4 operator>(ivec4 const &other) const {
+		ivec4 SIMD_CALL operator>(ivec4 const &other) const {
 			return ivec4(_mm_cmpgt_epi32(*data, *other.data));
 		}
 
-		ivec4 operator&(ivec4 const &other) const {
+		ivec4 SIMD_CALL operator&(ivec4 const &other) const {
 			return ivec4(_mm_and_si128(*data, *other.data));
 		}
 
-		ivec4 operator|(ivec4 const &other) const {
+		ivec4 SIMD_CALL operator|(ivec4 const &other) const {
 			return ivec4(_mm_or_si128(*data, *other.data));
 		}
 
-		static ivec4 xor(ivec4 const &in0, ivec4 const &in1) {
+		static ivec4 SIMD_CALL xor(ivec4 const &in0, ivec4 const &in1) {
 			return ivec4(_mm_xor_si128(*in0.data, *in1.data));
 		}
 
-		static ivec4 andnot(ivec4 const &in0, ivec4 const &in1) {
+		static ivec4 SIMD_CALL andnot(ivec4 const &in0, ivec4 const &in1) {
 			return ivec4(_mm_andnot_si128(*in0.data, *in0.data));
 		}
 
 		// performing a NOT on this vector is done by xor'ing with a vec
 		// set to be 100% 1's
-		ivec4 operator~() const{
+		ivec4 SIMD_CALL operator~() const{
 			ivec4 other(0xffffffff);
 			return ivec4(_mm_xor_si128(*data, *other.data));
 		}
 
 		// Bit-shift this vector right using &dist as a mask
 		// Fill using zeroes
-		ivec4 operator >> (ivec4 const& dist) {
+		ivec4 SIMD_CALL operator >> (ivec4 const& dist) {
 			return ivec4(_mm_srl_epi32(*data, *dist.data));
 		}
 		// Bit-shift this vector right by distance dist
 		// Fill using zeroes
-		ivec4 operator >> (int const& dist) {
+		ivec4 SIMD_CALL operator >> (int const& dist) {
 			ivec4 distv(dist);
 			return ivec4(_mm_srl_epi32(*data, *distv.data));
 		}
 		// Shift this vector left using &dist as a mask
 		// Fill using zeroes
-		ivec4 operator << (ivec4 const& dist) {
+		ivec4 SIMD_CALL operator << (ivec4 const& dist) {
 			return ivec4(_mm_sll_epi32(*data, *dist.data));
 		}
 		// Shfit this vector left by distance dist
 		// Fill using zeroes
-		ivec4 operator << (int const& dist) {
+		ivec4 SIMD_CALL operator << (int const& dist) {
 			ivec4 distv(dist);
 			return ivec4(_mm_sll_epi32(*data, *distv.data));
 		}
 
-		ivec4 operator==(ivec4 const &other) const {
+		ivec4 SIMD_CALL operator==(ivec4 const &other) const {
 			return ivec4(_mm_cmpeq_epi32(*data,*other.data));
 		}
 
@@ -167,62 +167,62 @@ namespace simd {
 		}
 
 		// Uniformly set all elements in this vector to a
-		void Fill(const float& a = 0.0f) {
+		void SIMD_CALL Fill(const float& a = 0.0f) {
 			*data = _mm_set_ps1(a);
 		}
 
 		// Store this vec4's data into data
-		void Store(__m128 _data) {
+		void SIMD_CALL Store(__m128 _data) {
 			_mm_store_ps(&data->m128_f32[0], _data);
 		}
 
 		// Load specified pointer into data
-		void Load(float* ptr) {
+		void SIMD_CALL Load(float* ptr) {
 			*data = _mm_load_ps(ptr);
 		}
 
 		// Basic operators
 
 		// Unary operators
-		vec4& operator+=(vec4 const & other) {
+		vec4& SIMD_CALL operator+=(vec4 const & other) {
 			*data = _mm_add_ps(*data, *other.data);
 			return *this;
 		}
-		vec4& operator-=(vec4 const & other) {
+		vec4& SIMD_CALL operator-=(vec4 const & other) {
 			*data = _mm_add_ps(*data, *other.data);
 			return *this;
 		}
-		vec4& operator*=(vec4 const & other) {
+		vec4& SIMD_CALL operator*=(vec4 const & other) {
 			*data = _mm_mul_ps(*data, *other.data);
 			return *this;
 		}
-		vec4& operator/=(vec4 const & other) {
+		vec4& SIMD_CALL operator/=(vec4 const & other) {
 			*data = _mm_div_ps(*data, *other.data);
 			return *this;
 		}
 
 		// pre & post increment/decrement operators
 
-		vec4& operator++() {
+		vec4& SIMD_CALL operator++() {
 			static const __m128 one = _mm_set1_ps(1.0f);
 			*data = _mm_add_ps(*data, one);
 			return *this;
 		}
 
-		vec4& operator--() {
+		vec4& SIMD_CALL operator--() {
 			static const __m128 one = _mm_set1_ps(1.0f);
 			*data = _mm_sub_ps(*data, one);
 			return *this;
 		}
 
-		vec4 operator++(int) {
+		vec4 SIMD_CALL operator++(int) {
 			static const __m128 one = _mm_set1_ps(1.0f);
 			vec4 result = *this;
 			*data = _mm_add_ps(*data, one);
 			return result;
 		}
 
-		vec4 operator--(int) {
+		vec4 SIMD_CALL operator--(int) {
 			static const __m128 one = _mm_set1_ps(1.0f);
 			vec4 result = *this;
 			*data = _mm_sub_ps(*data, one);
@@ -230,51 +230,51 @@ namespace simd {
 		}
 
 		// Binary operators
-		vec4 operator+(vec4 const &other) const {
+		vec4 SIMD_CALL operator+(vec4 const &other) const {
 			return vec4(_mm_add_ps(*data, *other.data));
 		}
-		vec4 operator-(vec4 const &other) const {
+		vec4 SIMD_CALL operator-(vec4 const &other) const {
 			return vec4(_mm_sub_ps(*data, *other.data));
 		}
-		vec4 operator*(vec4 const &other) const {
+		vec4 SIMD_CALL operator*(vec4 const &other) const {
 			return vec4(_mm_mul_ps(*data, *other.data));
 		}
-		vec4 operator/(vec4 const &other) const {
+		vec4 SIMD_CALL operator/(vec4 const &other) const {
 			return vec4(_mm_div_ps(*data, *other.data));
 		}
-		vec4 operator<(vec4 const &other) const {
+		vec4 SIMD_CALL operator<(vec4 const &other) const {
 			return vec4(_mm_cmplt_ps(*data, *other.data));
 		}
-		vec4 operator>(vec4 const &other) const {
+		vec4 SIMD_CALL operator>(vec4 const &other) const {
 			return vec4(_mm_cmpgt_ps(*data, *other.data));
 		}
-		vec4 operator<=(vec4 const &other) const {
+		vec4 SIMD_CALL operator<=(vec4 const &other) const {
 			return vec4(_mm_cmple_ps(*data, *other.data));
 		}
-		vec4 operator>=(vec4 const &other) const {
+		vec4 SIMD_CALL operator>=(vec4 const &other) const {
 			return vec4(_mm_cmpge_ps(*data, *other.data));
 		}
-		vec4 operator&(vec4 const &other) const {
+		vec4 SIMD_CALL operator&(vec4 const &other) const {
 			return vec4(_mm_and_ps(*data, *other.data));
 		}
-		vec4 operator|(vec4 const& other) const {
+		vec4 SIMD_CALL operator|(vec4 const& other) const {
 			return vec4(_mm_or_ps(*data, *other.data));
 		}
 		// xor this vector with another vector
-		vec4 xor(vec4 const& other) const {
+		vec4 SIMD_CALL xor(vec4 const& other) const {
 			return vec4(_mm_xor_ps(*data, *other.data));
 		}
 		
 		// static functions (for operation on two distinct vectors)
 
-		static vec4 xor(vec4 const& in0, vec4 const& in1) {
+		static vec4 SIMD_CALL xor(vec4 const& in0, vec4 const& in1) {
 			return vec4(_mm_xor_ps(*in0.data, *in1.data));
 		}
-		vec4 andnot(vec4 const& other) const {
+		vec4 SIMD_CALL andnot(vec4 const& other) const {
 			return vec4(_mm_andnot_ps(*data, *other.data));
 		}
 		
-		static vec4 dot(vec4 const& v0, vec4 const& v1) {
+		static vec4 SIMD_CALL dot(vec4 const& v0, vec4 const& v1) {
 			vec4 mul = v0 * v1;
 			vec4 tmp = _mm_shuffle_ps(*mul.data, *mul.data, _MM_SHUFFLE(3, 2, 1, 0));
 			tmp += mul;

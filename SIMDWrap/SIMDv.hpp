@@ -6,7 +6,7 @@
 #include <memory>
 
 #ifdef __GNUC__
-#define SIMD_CALL __vectorcall
+#define SIMD_CALL __cdecl
 #else 
 #define SIMD_CALL __vectorcall
 #endif
