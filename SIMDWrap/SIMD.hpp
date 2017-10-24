@@ -2,7 +2,13 @@
 #ifndef SIMD_H
 #define SIMD_H
 
-#include "SIMDv.hpp"
+#ifdef __GNUC__
+#define SIMD_CALL __cdecl
+#else
+#define SIMD_CALL __vectorcall
+#endif // __GNUC__
+
+
 #if defined(_WIN64)
 // 64-bit CPU's should all support SSE3 instruction set
 #define SIMD_LEVEL_SSE3

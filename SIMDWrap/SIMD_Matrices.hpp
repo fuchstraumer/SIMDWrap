@@ -15,7 +15,7 @@ namespace simd {
 		}
 	private:
 		// Contains the actual data for this matrix
-		std::array<vec4, 4> data;
+		std::array<vec4, 4> _data;
 	};
 }
 #endif // !SIMD_LEVEL_SSE3
@@ -30,20 +30,20 @@ namespace simd {
 		mat8x3() { }
 
 		mat8x3(const vec8 &x, const vec8 &y, const vec8 &z) {
-			data[0] = x;
-			data[1] = y;
-			data[2] = z;
+			_data[0] = x;
+			_data[1] = y;
+			_data[2] = z;
 		}
 
 		mat8x3(const vec8& v) {
-			data[0] = v;
-			data[1] = v;
-			data[2] = v;
+			_data[0] = v;
+			_data[1] = v;
+			_data[2] = v;
 		}
 
 
 	private:
-		std::array<vec8, 3> data;
+		std::array<vec8, 3> _data;
 	};
 
 	class mat8x4 {
