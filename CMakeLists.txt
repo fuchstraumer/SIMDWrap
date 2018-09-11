@@ -14,8 +14,12 @@ IF(MSVC)
 ENDIF()
 
 SET(simd_wrap_srcs 
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/geometric_functions.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/matrix.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/simd_traits.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/storage_proxy.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/vector_functions.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/vector.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/vector.inl"
 )
 
 ADD_CUSTOM_TARGET(SIMDwrap.sources SOURCES ${simd_wrap_srcs})
