@@ -7,10 +7,10 @@ TARGET_INCLUDE_DIRECTORIES(SIMDwrap INTERFACE
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/SIMDwrap>
 )
 
-SET_TARGET_PROPERTIES(SIMDwrap PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
-
 IF(MSVC)
-    TARGET_COMPILE_OPTIONS(SIMDwrap INTERFACE "/arch:AVX2")
+    TARGET_COMPILE_OPTIONS(SIMDwrap INTERFACE "/arch:AVX2" "/std:c++17")
+    # interface libraries can't use target_properties for CXX standard, so 
+    # need to eventually expand this for clang/gcc etc
 ENDIF()
 
 SET(simd_wrap_srcs 

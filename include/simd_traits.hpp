@@ -13,7 +13,7 @@ struct arm_platform_tag{};
 // will be set by CMake script eventually
 using platform_type = x64_platform_tag;
 // will also be set by CMake, eventually
-inline static constexpr bool USE_AVX_INTRINSICS = true;
+static constexpr bool USE_AVX_INTRINSICS = true;
 
 namespace detail {
 
