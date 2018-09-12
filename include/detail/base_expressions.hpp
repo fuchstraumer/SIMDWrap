@@ -67,6 +67,7 @@ namespace sw {
                 }
             }
             else {
+                static_assert(false, "ARM intrinsics not currently supported.");
                 // need to implement ARM intrinsics
             }
         }
@@ -82,7 +83,7 @@ namespace sw {
     template<typename T, size_t LEN>
     struct broadcast_expression {
         static_assert(is_simd_compatible<T,LEN>, "Given template parameters cannot generate a valid vector type.");
-        const T value;
+        T value;
     public:
         broadcast_expression(T val) noexcept : value(std::move(val)) {}
         typename simd_traits<T,LEN>::vector_type operator()() const noexcept {
