@@ -32,15 +32,50 @@ namespace sw {
                     else if constexpr (std::is_same_v<T, double> && LEN <= 2) {
                         return __m128d();
                     }
-                    else if constexpr (std::is_same_v<platform_type, x64_platform_tag> && USE_AVX_INTRINSICS) {
+                    else if constexpr (USE_AVX_INTRINSICS && std::is_floating_point_v<T>) {
                         if constexpr (std::is_same_v<T, double> && LEN <= 4 && LEN > 2) {
                             return __m256d();
                         }
                         else if constexpr (std::is_same_v<T, float> && LEN <= 8 && LEN > 4) {
                             return __m256();
                         }
-                        else if constexpr (std::is_integral_v<T> && USE_AVX_INTRINSICS) {
+                    }
+                    else if constexpr (std::is_integral_v<T>) {// will have to cast from unsigned types, as these only accept signed
+                    if constexpr (std::is_same_v<T, uint8_t> || std::is_same_v<T, int8_t>) {
+                        if constexpr (LEN > 16 && USE_AVX_INTRINSICS) {
                             return __m256i();
+                        }
+                        else {
+                            static_assert(LEN <= 16, "Length of integer vector is greater than supported on platform.");
+                            return __m128i();
+                        }
+                        }
+                        else if constexpr (std::is_same_v<T, uint16_t> || std::is_same_v<T, int16_t>) { 
+                            if constexpr (LEN > 8 && USE_AVX_INTRINSICS) {
+                                return __m256i();
+                            }
+                            else {
+                                static_assert(LEN <= 8, "Length of integer vector is greater than supported on platform.");
+                                return __m128i();
+                            }
+                        }
+                        else if constexpr (std::is_same_v<T, uint32_t> || std::is_same_v<T, int32_t>) {
+                            if constexpr (LEN > 4 && USE_AVX_INTRINSICS) {
+                                return __m128i();
+                            }
+                            else {
+                                static_assert(LEN <= 4, "Length of integer vector is greater than supported on platform.");
+                                return _mm_set1_epi32(static_cast<int>(val));
+                            }
+                        }
+                        else if constexpr (std::is_same_v<T, uint64_t> || std::is_same_v<T, int64_t>) {
+                            if constexpr (LEN > 2 && USE_AVX_INTRINSICS) {
+                                return __m256i();
+                            }
+                            else {
+                                static_assert(LEN <= 2, "Length of integer vector is greater than supported on platform.");
+                                return __m128i();
+                            }
                         }
                     }
                 }
