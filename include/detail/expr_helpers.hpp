@@ -20,6 +20,7 @@ namespace sw {
 
         template<typename T>
         struct expr_node_traits<scalar<T>> {
+            static_assert(std::is_arithmetic_v<T>, "expr_node_traits for scalar instantiated with non-arithmetic type!");
             using reference_type = scalar<T>;
         };
 

@@ -10,8 +10,7 @@ namespace sw {
         using underlying_vector_type = typename simd_traits<T, LEN>::vector_type;
         static_assert(is_simd_compatible<T, LEN>, "Given combination of data type T and vector length LEN is not SIMD-compatible!");
         constexpr vector() noexcept;
-        template<typename...Args>
-        constexpr vector(Args...args) noexcept;
+        constexpr explicit vector(T value) noexcept;
         // not the same as LEN. Should we force matching 
         // for LEN or for size()?
         // - probably LEN, as thats the users/mathematical intent

@@ -27,6 +27,7 @@ namespace sw {
                     return _mm256_set1_pd(val);
                 }
                 else if constexpr (std::is_integral_v<T>) {
+                    // have to do this as integer register types support many type-lengths
                     // will have to cast from unsigned types, as these only accept signed
                     if constexpr (std::is_same_v<T, uint8_t> || std::is_same_v<T, int8_t>) {
                         if constexpr (LEN > 16 && USE_AVX_INTRINSICS) {
