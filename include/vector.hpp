@@ -12,6 +12,10 @@ namespace sw {
         constexpr vector() noexcept;
         template<typename...Args>
         constexpr vector(Args...args) noexcept;
+        // not the same as LEN. Should we force matching 
+        // for LEN or for size()?
+        // - probably LEN, as thats the users/mathematical intent
+        constexpr size_t size() const noexcept;
     private:
         underlying_vector_type data;
     };

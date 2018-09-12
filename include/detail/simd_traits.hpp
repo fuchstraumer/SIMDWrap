@@ -15,8 +15,10 @@ namespace sw {
     // will be set by CMake script eventually. will be used
     // to enable and use NEON types on ARM.
     using platform_type = x64_platform_tag;
-    // will also be set by CMake, eventually
-    static constexpr bool USE_AVX_INTRINSICS = true;
+    // will be set by CMake, eventually. this works for now: AVX is supported on 95% of hardware
+    // with x64 according to steam hardware survey iirc
+    static constexpr bool USE_AVX_INTRINSICS = !std::is_same_v<platform_type, x86_platform_tag> 
+        && !std::is_same_v<platform_type, arm_platform_tag>;
 
     namespace detail {
 
@@ -61,6 +63,7 @@ namespace sw {
     template<typename T, size_t LEN>
     struct simd_traits {
         using vector_type = detail::vector_type_proxy<T, LEN>::type;
+        using value_type = T;
         constexpr static size_t num_entries = sizeof(vector_type) / sizeof(T);
         constexpr static size_t remainder_entries = num_entries % LEN;
         constexpr static size_t alignment = vectorized_alignment<T, LEN>;
